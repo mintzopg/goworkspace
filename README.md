@@ -1,0 +1,3 @@
+# goworkspace
+
+My go progrmas
