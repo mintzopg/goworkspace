@@ -1,3 +1,3 @@
 # goworkspace
 
-My go progrmas
+golang practice
