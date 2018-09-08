@@ -9,8 +9,6 @@ func main() {
 
 	in := gen()
 
-	// f := factorial(in)
-
 	// FAN OUT: multiple functions pulling from the same channel
 	// ditribute across 10 go routines
 	myChannels := []<-chan int{
