@@ -9,35 +9,25 @@ func main() {
 
 	in := gen()
 
-	// FAN OUT: multiple functions pulling from the same channel
-	// ditribute across 10 workers
-	myChannels := []<-chan int{
-		factorial(in),
-		factorial(in),
-		factorial(in),
-		factorial(in),
-		factorial(in),
-		factorial(in),
-		factorial(in),
-		factorial(in),
-		factorial(in),
-		factorial(in),
+	// FAN OUT
+	// Multiple functions reading from the same channel until that channel is closed
+	// Distribute work across multiple functions (ten goroutines) that all read from in.
+	xc := fanOut(in, 10)
+
+	// FAN IN
+	// multiplex multiple channels onto a single channel
+	// merge the channels from c0 through c9 onto a single channel
+	for n := range merge(xc...) {
+		fmt.Println(n)
 	}
 
-	//FAN IN
-	// merge multiple channels into one
-	var y int // for tracking purpose
-	for n := range merge(myChannels) {
-		y++ // track number of numebrs
-		fmt.Printf("%d --- %d\n", y, n)
-	}
 }
 
-func gen() <-chan int { // puts 100... numbers in a channel
+func gen() <-chan int {
 	out := make(chan int)
 	go func() {
-		for i := 0; i < 100000; i++ {
-			for j := 30; j < 40; j++ {
+		for i := 0; i < 10; i++ {
+			for j := 3; j < 13; j++ {
 				out <- j
 			}
 		}
@@ -46,39 +36,20 @@ func gen() <-chan int { // puts 100... numbers in a channel
 	return out
 }
 
-func factorial(in <-chan int) <-chan int { //sq
+func fanOut(in <-chan int, n int) []<-chan int {
+	xc := make([]<-chan int, n)
+	for i := 0; i < n; i++ {
+		xc[i] = factorial(in)
+	}
+	return xc
+}
+
+func factorial(in <-chan int) <-chan int {
 	out := make(chan int)
 	go func() {
 		for n := range in {
 			out <- fact(n)
 		}
-		close(out)
-	}()
-	return out
-}
-
-func merge(cs []<-chan int) <-chan int {
-	var wg sync.WaitGroup
-	wg.Add(len(cs))
-
-	out := make(chan int) // out channle merges all
-
-	// start an output go routine for each input channel in cs
-	// output copies values from  c to out until c is closed
-	output := func(c <-chan int) {
-		for n := range c {
-			out <- n
-		}
-		wg.Done()
-	}
-
-	for _, c := range cs {
-		go output(c)
-	}
-
-	// start a go routine to close out once all the output go routines are done.
-	go func() {
-		wg.Wait()
 		close(out)
 	}()
 	return out
@@ -92,13 +63,27 @@ func fact(n int) int {
 	return total
 }
 
-/*
-CHALLENGE #1:
--- Change the code above to execute 1,000 factorial computations concurrently and in parallel.
--- Use the "fan out / fan in" pattern
+func merge(cs ...<-chan int) <-chan int {
+	var wg sync.WaitGroup
+	out := make(chan int)
 
-CHALLENGE #2:
-WATCH MY SOLUTION BEFORE DOING THIS CHALLENGE #2
--- While running the factorial computations, try to find how much of your resources are being used.
--- Post the percentage of your resources being used to this discussion: https://goo.gl/BxKnOL
-*/
+	output := func(c <-chan int) {
+		for n := range c {
+			out <- n
+		}
+		wg.Done()
+	}
+
+	wg.Add(len(cs))
+	for _, c := range cs {
+		go output(c)
+	}
+
+	// Start a goroutine to close out once all the output goroutines are
+	// done.  This must start after the wg.Add call.
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+	return out
+}
