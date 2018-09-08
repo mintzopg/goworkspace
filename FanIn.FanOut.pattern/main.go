@@ -10,7 +10,7 @@ func main() {
 	in := gen()
 
 	// FAN OUT: multiple functions pulling from the same channel
-	// ditribute across 10 go routines
+	// ditribute across 10 workers
 	myChannels := []<-chan int{
 		factorial(in),
 		factorial(in),
