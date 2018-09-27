@@ -1,12 +1,7 @@
 package countmaxslice
 
-// func main() {
-// 	v := []int{-4, 2, 2}
-// 	fmt.Println(countmax(v))
-
-// }
-
 // Countmax function(v []int) int; counts the number of elements in slice 'v' that are equal to the max element in the slice
+// e.g. u = [4, 4, 3, 1] returns 2 (2 times 4 is present)
 func Countmax(u []int) int {
 	count := 0
 
