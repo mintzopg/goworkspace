@@ -14,7 +14,7 @@ func formMagicSquare(n int) {
 	3. If the calculated row position is -1 & calculated column position is n, the new position would be: (0, n-2).
 
 	*/
-	// construct magic square
+	// initialize nxn, magic square to be
 	magicSquare := make([][]int, n)
 	for x := range magicSquare {
 		magicSquare[x] = make([]int, n)
