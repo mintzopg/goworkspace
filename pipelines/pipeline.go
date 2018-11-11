@@ -21,7 +21,7 @@ func random(min, max int) int {
 	return rand.Intn(max-min) + min
 }
 
-// keep sending values to channel until is closed
+// keep sending values to channel "a" until is closed
 func first(min, max int, out chan<- int) {
 	for {
 		mutex.Lock()
@@ -35,7 +35,7 @@ func first(min, max int, out chan<- int) {
 	}
 }
 
-// receive data from in channel and keep sending them to out, until a random number already exists in data
+// receive data from in channel "a" coming from "first" and keep sending them to out channel "b", until a random number already exists in data
 func second(out chan<- int, in <-chan int) {
 	for x := range in {
 		fmt.Print(x, " ")
@@ -54,7 +54,7 @@ func second(out chan<- int, in <-chan int) {
 	wg.Done()
 }
 
-// keeps reading from channel and computes
+// keeps reading from in channel "b"  and computes
 func third(in <-chan int) {
 	sum := 0
 	for k := range in {
