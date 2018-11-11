@@ -77,8 +77,8 @@ func main() {
 	}
 
 	rand.Seed(time.Now().UnixNano())
-	a := make(chan int, 1)
-	b := make(chan int, 1)
+	a := make(chan int)
+	b := make(chan int)
 	aClose := make(chan bool, 1)
 	aClose <- false
 
