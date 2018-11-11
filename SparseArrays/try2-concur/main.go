@@ -13,7 +13,7 @@ func matchingStrings(strings []string, queries []string) []int32 {
 
 	for i, query := range queries {
 		wg.Add(1)
-		contains(strings, query, freq, i)
+		go contains(strings, query, freq, i)
 	}
 	return freq
 }
