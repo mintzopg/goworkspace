@@ -9,7 +9,7 @@ import (
 
 type person struct {
 	t0 int32 // initial position
-	ti int32 // position not
+	ti int32 // position now
 	bn int32 // number of bribes
 }
 
