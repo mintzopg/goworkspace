@@ -5,6 +5,8 @@ import (
 	"math"
 )
 
+// Hacker Rank problem
+
 type person struct {
 	t0 int32 // initial position
 	ti int32 // position not
