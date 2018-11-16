@@ -5,28 +5,28 @@ import "fmt"
 // Hacker Rank problem
 
 func minimumBribes(q []int32) {
-	q0 := make([]int32, len(q))
-	var cost int32
-	for i := range q {
-		q0[i] = int32(i + 1)
-	}
-	for i, v := range q {
-		// check unmoved
-		if q0[i] == v {
-			continue
-		}
-		diff := v - int32(i+1)
-		if diff < 0 {
-			continue
-		}
-		if diff >= 1 && diff <= 2 {
-			cost += diff
+	cost := 0
+	// val: value of item in normal queue i.e. 1, 2, 3, 4, ...., n
+	for val := len(q); val > 0; val-- {
+		i := val - 1 // slice index
+		if int32(val) == q[i] {
+			q = q[:i]
+			continue // no bribe
 		} else {
-			fmt.Println("Too chaotic")
-			return
+			if int32(val) == q[i-1] {
+				cost += 1
+				q = append(q[:i-1], q[i:]...)
+				continue
+			} else if int32(val) == q[i-2] {
+				cost += 2
+				q = append(q[:i-2], q[i-1:]...)
+				continue
+			} else {
+				fmt.Println("Too chaotic")
+				return
+			}
 		}
 	}
-
 	fmt.Println(cost)
 }
 func main() {
