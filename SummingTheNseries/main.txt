@@ -1,0 +1,34 @@
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+func summingSeries(n int64) int32 {
+	var i int64
+	var sum int64
+
+	gen := func() <-chan int64 {
+		out := make(chan int64)
+		go func() {
+			for i = 1; i <= n; i++ {
+				out <- 2*i - 1 // i*i - (i-1)*(i-1)
+			}
+			close(out)
+		}()
+		return out
+	}
+
+	c := gen() // return a channel with n sums
+	// consume channel
+	for x := range c {
+		sum += x
+	}
+
+	return int32(sum % int64((math.Pow10(9) + 7)))
+}
+
+func main() {
+	fmt.Println(summingSeries(2))
+}
