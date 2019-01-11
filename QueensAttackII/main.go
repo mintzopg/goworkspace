@@ -12,6 +12,7 @@ func queensAttack(n int32, k int32, qr int32, qc int32, obstacles [][]int32) int
 		obstaclesMap[[2]int32{obs[0], obs[1]}] = 1
 	}
 
+	// Algorithm
 	for _, d := range directions { // for each direction
 		row, col := qr, qc // start from queen's position
 		for {              // increment per direction until limits reach
@@ -23,7 +24,7 @@ func queensAttack(n int32, k int32, qr int32, qc int32, obstacles [][]int32) int
 			if _, ok := obstaclesMap[[2]int32{row, col}]; ok { // check for obstacle and break
 				break
 			}
-			moves++ // increase move
+			moves++ // increase moves count
 		}
 	}
 	return moves
